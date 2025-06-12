@@ -1,0 +1,3 @@
+# Task App
+
+Currently under development. This is a task management app that will have a flask backend using SQLAlchemy and Marshmallow, and a Vite React frontend. Users will be able to log in and create, update, delete, and manage their tasks. More to come...
