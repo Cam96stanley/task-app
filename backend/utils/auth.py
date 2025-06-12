@@ -16,7 +16,6 @@ def check_password(plain_password: str, hashed_password: str) -> bool:
 def generate_token(user):
   payload = {
     "sub": str(user.id),
-    "role": user.role.value,
     "exp": datetime.now(timezone.utc) + timedelta(days=1)
   }
 

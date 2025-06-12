@@ -6,6 +6,32 @@ from app.blueprints.users import user_bp
 from app.blueprints.users.schemas import user_schema, return_user_schema
 from utils.auth import hash_password, check_password, generate_token, token_required
 
+
+@user_bp.route("/login", methods=["POST"])
+def login():
+  data = request.get_json()
+  
+  if not data or not data.get("email") or not data.get("password"):
+    return jsonify({"error": "Email and password are required"}), 400
+  
+  user = db.session.query(User).filter_by(email=data["email"]).first()
+  
+  if not user or not check_password(data["password"], user.password):
+    return jsonify({"error": "Invalid email or password"}), 401
+  
+  token = generate_token(user)
+  
+  return jsonify({
+    "message": "User logged in successfully",
+    "token": token,
+    "user": {
+      "id": user.id,
+      "email": user.email,
+      "name": user.name
+    }
+  }), 200
+
+
 @user_bp.route("/", methods=["POST"])
 def create_user():
   try:
