@@ -34,21 +34,21 @@ def token_required(f):
       if len(parts) == 2 and parts[0] == "Bearer":
         token = parts[1]
       
-      if not token:
-        return jsonify({"message": "Token is missing"}), 401
-      
-      try:
-        data = jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=["HS256"])
-        user_id = data["sub"]
-      
-      except jose.exceptions.ExpiredSignatureError:
-        return jsonify({"message": "Token has expired!"}), 401
-      
-      except jose.exceptions.JWTError:
-        return jsonify({"message": "Invalid token!"}), 401
-      
-      kwargs["user_id"] = user_id
-      return f(*args, **kwargs)
+    if not token:
+      return jsonify({"message": "Token is missing"}), 401
+    
+    try:
+      data = jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=["HS256"])
+      user_id = data["sub"]
+    
+    except jose.exceptions.ExpiredSignatureError:
+      return jsonify({"message": "Token has expired!"}), 401
+    
+    except jose.exceptions.JWTError:
+      return jsonify({"message": "Invalid token!"}), 401
+    
+    kwargs["user_id"] = user_id
+    return f(*args, **kwargs)
   return decorated
 
 def get_user_task_or_404(task_id, user_id):

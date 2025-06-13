@@ -27,3 +27,10 @@ def create_task(user_id):
 def get_task(task_id, user_id):
   task = get_user_task_or_404(task_id, user_id)
   return jsonify(task_schema.dump(task)), 200
+
+@task_bp.route("/", methods=["GET"])
+@token_required
+def get_tasks(user_id):
+  tasks = Task.query.filter_by(user_id=user_id).all()
+  
+  return jsonify(tasks_schema.dump(tasks)), 200
