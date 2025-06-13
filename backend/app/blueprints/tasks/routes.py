@@ -3,7 +3,7 @@ from marshmallow import ValidationError
 from app.blueprints.tasks import task_bp
 from app.models import db, Task
 from app.blueprints.tasks.schemas import task_schema, tasks_schema
-from utils.auth import token_required
+from utils.auth import get_user_task_or_404, token_required
 
 @task_bp.route("/", methods=["POST"])
 @token_required
@@ -21,3 +21,9 @@ def create_task(user_id):
   
   except ValidationError as e:
     return jsonify(e.messages), 400
+
+@task_bp.route("/<int:task_id>", methods=["GET"])
+@token_required
+def get_task(task_id, user_id):
+  task = get_user_task_or_404(task_id, user_id)
+  return jsonify(task_schema.dump(task)), 200

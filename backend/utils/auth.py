@@ -2,8 +2,9 @@ from flask_bcrypt import Bcrypt
 from functools import wraps
 from jose import jwt
 from datetime import datetime, timedelta, timezone
-from flask import current_app, jsonify, request
+from flask import abort, current_app, jsonify, request
 import jose
+from app.models import Task
 
 bcrypt = Bcrypt()
 
@@ -46,5 +47,12 @@ def token_required(f):
       except jose.exceptions.JWTError:
         return jsonify({"message": "Invalid token!"}), 401
       
-      return f(user_id, *args, **kwargs)
+      kwargs["user_id"] = user_id
+      return f(*args, **kwargs)
   return decorated
+
+def get_user_task_or_404(task_id, user_id):
+  task = Task.query.filter_by(id=task_id, user_id=user_id).first()
+  if not task:
+    abort(404, description="Task not found or not authorized")
+  return task

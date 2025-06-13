@@ -1,4 +1,5 @@
-from flask import Flask
+from flask import Flask, jsonify
+from werkzeug.exceptions import HTTPException
 from app.models import db
 from app.extensions import ma
 from app.blueprints.users import user_bp
@@ -13,5 +14,17 @@ def create_app(config_name):
   
   app.register_blueprint(user_bp, url_prefix="/users")
   app.register_blueprint(task_bp, url_prefix="/tasks")
+  
+  @app.errorhandler(HTTPException)
+  def handle_http_exception(e):
+    response = e.get_response()
+    response.data = jsonify({
+      "error": e.name,
+      "message": e.description,
+      "code": e.code
+    }).data
+    
+    response.content_type = "application/json"
+    return response
   
   return app
