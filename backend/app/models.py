@@ -22,7 +22,7 @@ class User(db.Model):
   email: Mapped[str] = mapped_column(db.String(150), nullable=False)
   password: Mapped[str] = mapped_column(db.String(150), nullable=False)
   
-  tasks = db.relationship("Task", back_populates="user")
+  tasks = db.relationship("Task", back_populates="user", cascade="all, delete-orphan")
 
 
 class Task(db.Model):
