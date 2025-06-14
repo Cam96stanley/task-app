@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import HamburgerMenu from "../components/HamburgerMenu";
+import { useAuth } from "../context/AuthContext";
 
 export default function Layout() {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const { user, logout } = useAuth();
   const [showMenu, setShowMenu] = useState<boolean>(false);
   return (
     <div className="bg-[#181818] w-screen h-screen text-white">
@@ -12,7 +13,7 @@ export default function Layout() {
           Taskley
         </Link>
 
-        {isLoggedIn ? (
+        {user ? (
           <>
             <ul className="hidden md:flex items-center space-x-5">
               <li>About</li>

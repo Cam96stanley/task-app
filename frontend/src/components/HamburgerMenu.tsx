@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 interface HamburgerMenuProps {
   showMenu: boolean;
@@ -9,6 +10,8 @@ export default function HamburgerMenu({
   setShowMenu,
   showMenu,
 }: HamburgerMenuProps) {
+  const { user, logout } = useAuth();
+
   return (
     <div className="relative md:hidden">
       <button
@@ -29,6 +32,18 @@ export default function HamburgerMenu({
               onClick={() => setShowMenu(false)}
             >
               Home
+            </Link>
+          </li>
+          <li className="w-full">
+            <Link
+              className="block py-4 text-xl w-full text-center hover:bg-[#202020] cursor-pointer"
+              to="/"
+              onClick={() => {
+                logout();
+                setShowMenu(false);
+              }}
+            >
+              Logout
             </Link>
           </li>
         </ul>

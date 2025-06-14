@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import { signupUser } from "../services/auth";
+import { signupUser, loginUser } from "../services/auth";
 
 interface User {
   id: number;
@@ -10,11 +10,17 @@ interface User {
 interface AuthContextType {
   user: User | null;
   signup: (data: SignupData) => Promise<void>;
+  login: (data: LoginData) => Promise<void>;
   logout: () => void;
 }
 
 interface SignupData {
   name: string;
+  email: string;
+  password: string;
+}
+
+interface LoginData {
   email: string;
   password: string;
 }
@@ -25,14 +31,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
   const signup = async (data: SignupData) => {
-    const newUser = await signupUser(data);
-    setUser(newUser);
+    await signupUser(data);
+    const loggedInUser = await loginUser({
+      email: data.email,
+      password: data.password,
+    });
+    setUser(loggedInUser);
   };
 
-  const logout = () => setUser(null);
+  const login = async (data: LoginData) => {
+    const loggedInUser = await loginUser(data);
+    setUser(loggedInUser);
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem("token");
+  };
 
   return (
-    <AuthContext.Provider value={{ user, signup, logout }}>
+    <AuthContext.Provider value={{ user, signup, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

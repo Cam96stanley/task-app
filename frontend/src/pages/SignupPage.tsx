@@ -2,11 +2,11 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import SignupForm from "../components/SignupForm";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function SignupPage() {
   const { signup } = useAuth();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -22,7 +22,7 @@ export default function SignupPage() {
     e.preventDefault();
     try {
       await signup(formData);
-      // navigate("/dashboard");
+      navigate("/dashboard");
     } catch (err: any) {
       setError(err.response?.data?.message || "Signup failed");
     }
